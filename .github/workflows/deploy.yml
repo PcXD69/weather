@@ -26,7 +26,16 @@ jobs:
         with:
           node-version: 20
 
+      - name: Extract project ZIP
+        run: |
+          if [ ! -f skycast-weather.zip ]; then
+            echo "Error: skycast-weather.zip was not found in the repository root."
+            exit 1
+          fi
+          unzip -o -q skycast-weather.zip -d .
+
       - name: Install dependencies
+        working-directory: skycast-weather
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -35,6 +44,7 @@ jobs:
           fi
 
       - name: Build
+        working-directory: skycast-weather
         run: npm run build
 
       - name: Configure Pages
@@ -43,7 +53,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: skycast-weather/dist
 
   deploy:
     needs: build
